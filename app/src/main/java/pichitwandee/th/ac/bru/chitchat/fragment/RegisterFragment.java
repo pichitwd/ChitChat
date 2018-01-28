@@ -1,5 +1,6 @@
 package pichitwandee.th.ac.bru.chitchat.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -93,6 +94,11 @@ public class RegisterFragment extends Fragment {
 
     private void uploadValueToFirebase() {
 
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Please Wait few minus..");
+        progressDialog.setMessage("Try To Save Your Value To Firebase");
+        progressDialog.show();
+
 //        Initial View
         EditText nameEditText = getView().findViewById(R.id.edtName);
         final EditText emailEditText = getView().findViewById(R.id.edtEmail);
@@ -121,6 +127,8 @@ public class RegisterFragment extends Fragment {
 
                                 Toast.makeText(getActivity(), "Register success",
                                         Toast.LENGTH_SHORT).show();
+
+                                progressDialog.dismiss();
 
                                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                 String userUIDstring = firebaseUser.getUid();

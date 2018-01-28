@@ -1,6 +1,9 @@
 package pichitwandee.th.ac.bru.chitchat.fragment;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,8 +12,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import pichitwandee.th.ac.bru.chitchat.R;
+import pichitwandee.th.ac.bru.chitchat.ServiceActivity;
 import pichitwandee.th.ac.bru.chitchat.utility.MyAlert;
 
 /**
@@ -40,6 +50,12 @@ public class MainFragment extends Fragment{
             @Override
             public void onClick(View view) {
 
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setTitle("Please Wait few minus...");
+                progressDialog.setMessage("Continue Connected Firebase");
+                progressDialog.show();
+
+
 //                Initial View
                 EditText emailEditText = getView().findViewById(R.id.edtEmail);
                 EditText passwordEditText = getView().findViewById(R.id.edtPassword);
@@ -58,6 +74,41 @@ public class MainFragment extends Fragment{
                 } else {
 
 //                    No Space
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                    firebaseAuth.signInWithEmailAndPassword(emailString, passwordString)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        Toast.makeText(getActivity(), "Welcome",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        progressDialog.dismiss();
+
+
+                                        Intent intent = new Intent(getActivity(),
+                                                ServiceActivity.class);
+                                        startActivity(intent);
+                                        getActivity().finish();// Destroy เอาหน้า 2 มาแสดง หลังจากลอกอินได้
+
+
+
+                                    } else {
+
+                                        progressDialog.dismiss();
+
+                                        MyAlert myAlert = new MyAlert(getActivity());
+                                        myAlert.normalDialog("Cannot Login",
+                                                task.getException().getMessage());
+
+                                    }
+
+
+                                } // onnComplete
+
+                            });
                 }
 
             } // onClick
