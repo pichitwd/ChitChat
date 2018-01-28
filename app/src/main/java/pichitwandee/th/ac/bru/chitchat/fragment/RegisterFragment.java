@@ -16,15 +16,20 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import pichitwandee.th.ac.bru.chitchat.MainActivity;
 import pichitwandee.th.ac.bru.chitchat.R;
 import pichitwandee.th.ac.bru.chitchat.utility.MyAlert;
+import pichitwandee.th.ac.bru.chitchat.utility.RegisterModel;
 
 /**
  * Created by CS-BRU on 27/1/2561.
@@ -90,10 +95,10 @@ public class RegisterFragment extends Fragment {
 
 //        Initial View
         EditText nameEditText = getView().findViewById(R.id.edtName);
-        EditText emailEditText = getView().findViewById(R.id.edtEmail);
+        final EditText emailEditText = getView().findViewById(R.id.edtEmail);
         EditText passwordEditText = getView().findViewById(R.id.edtPassword);
 
-        String nameString = nameEditText.getText().toString().trim();
+        final String nameString = nameEditText.getText().toString().trim();
         String emailString = emailEditText.getText().toString().trim();
         String passwordString = passwordEditText.getText().toString().trim();
 
@@ -121,6 +126,28 @@ public class RegisterFragment extends Fragment {
                                 String userUIDstring = firebaseUser.getUid();
                                 Log.d("28JanV1", "userID ==>" + userUIDstring);
 
+//                                Setup Model
+
+                                final RegisterModel registerModel = new RegisterModel(userUIDstring, nameString);
+
+//                                Setup Dislay
+
+                                UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest
+                                        .Builder().setDisplayName(nameString).build();
+
+                                firebaseUser.updateProfile(userProfileChangeRequest)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                                DatabaseReference databaseReference = FirebaseDatabase
+                                                        .getInstance()
+                                                        .getReference()
+                                                        .child("DetailUser");
+                                                databaseReference.child(nameString).setValue(registerModel);
+
+                                            }// onSuccess
+                                        });
 
 //                                Back to MainFragment
                                 getActivity().getSupportFragmentManager().popBackStack();

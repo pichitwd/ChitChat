@@ -6,9 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import pichitwandee.th.ac.bru.chitchat.R;
+import pichitwandee.th.ac.bru.chitchat.utility.MyAlert;
 
 /**
  * Created by CS-BRU on 27/1/2561.
@@ -24,7 +27,42 @@ public class MainFragment extends Fragment{
 //        Register Controller
         registerController();
 
+//        Login Contrller
+        loginContrller();
+
+
     } //Main Method
+
+    private void loginContrller() {
+        Button button = getView().findViewById(R.id.btnLogin);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+//                Initial View
+                EditText emailEditText = getView().findViewById(R.id.edtEmail);
+                EditText passwordEditText = getView().findViewById(R.id.edtPassword);
+
+//                Get Value From EditText
+                String emailString = emailEditText.getText().toString().trim();
+                String passwordString = passwordEditText.getText().toString().trim();
+
+//                Check Space
+                if (emailString.isEmpty()|| passwordString.isEmpty()) {
+
+                    MyAlert myAlert = new MyAlert(getActivity());
+                    myAlert.normalDialog("Have Space",
+                            "Please fill Email and Password");
+
+                } else {
+
+//                    No Space
+                }
+
+            } // onClick
+        });
+    }
 
     private void registerController() {
         TextView textView = getView().findViewById(R.id.txtNewRegister);
